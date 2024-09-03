@@ -65,13 +65,13 @@ if __name__ == '__main__':
 
     
     cx, cy = df[:, dt.mean(f.X)][0, 0], df[:, dt.mean(f.Y)][0, 0]
-    df['Radius'] = df[:, dt.math.sqrt((f.X - cx)**2 + (f.Y - cy)**2)]
+    # df['Radius'] = df[:, dt.math.sqrt((f.X - cx)**2 + (f.Y - cy)**2)]
     df['Aspect Ratio'] = df[:, f.Length / f.Width]
-    keys.append('Aspect Ratio')
+    # keys.append('Aspect Ratio')
     
     for key in keys:
         # サンプルデータの生成
-        x = df['Radius'].to_numpy()
+        x = df['Aspect Ratio'].to_numpy()
         y = df[key].to_numpy()
         #data = np.vstack((x, y)).T
         data = np.hstack((x, y))
