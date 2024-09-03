@@ -59,31 +59,38 @@ if __name__ == '__main__':
     # CSVファイルを読み込む
     df = dt.fread(file)
     df = lys.rm_columns(df, mnpis)  # remove deactivated columns
-    df = lys.rm_na_rows(df, skip_cols = 4)  # remove rows with NA
+    df = lys.rm_na_row(df, skip_cols = 4)  # remove rows with NA
     #df = df[dt.rowsum(dt.isna(f[4, :])) < len(mnpas) - 4, :]    # Noneを含む行を落とす
+    df = df[::100,:]    # 100分の1サンプリング
 
-    cx, cy = dt.mean(df[:,f.X])[0,0], dt.mean(df[:,f.Y])[0,0]
+    
+    cx, cy = df[:, dt.mean(f.X)][0, 0], df[:, dt.mean(f.Y)][0, 0]
     df['Radius'] = df[:, dt.math.sqrt((f.X - cx)**2 + (f.Y - cy)**2)]
-    df['Aspect'] = df[:, f.Length / f.Width]
+    df['Aspect Ratio'] = df[:, f.Length / f.Width]
+    keys.append('Aspect Ratio')
+    
+    for key in keys:
+        # サンプルデータの生成
+        x = df['Radius'].to_numpy()
+        y = df['Aspect Ratio'].to_numpy()
+        #data = np.vstack((x, y)).T
+        data = np.hstack((x, y))
+        print(x.shape, y.shape, data.shape)
 
-    # サンプルデータの生成
-    x = df['Radisu'].to_numpy()
-    y = df['Aspect'].to_numpy()
-    data = np.vstack((x, y)).T
+        # k-meansクラスタリングの実行
+        kmeans = KMeans(n_clusters=2)
+        kmeans.fit(data)
+        labels = kmeans.labels_
 
-    # k-meansクラスタリングの実行
-    kmeans = KMeans(n_clusters=3)
-    kmeans.fit(data)
-    labels = kmeans.labels_
-
-    # クラスタごとに色分けして散布図を作成
-    plt.figure(figsize=(10, 8))
-    scatter = plt.scatter(data[:, 0], data[:, 1], c=labels, cmap='viridis', s=1)
-    plt.colorbar(scatter)
-    plt.xlabel('Radius, mm')
-    plt.ylabel('Aspect Ratio')
-    plt.title('Clustered Scatter Plot')
-    plt.show()
+        # クラスタごとに色分けして散布図を作成
+        plt.figure(figsize=(10, 8))
+        scatter = plt.scatter(data[:, 0], data[:, 1], c=labels, cmap='viridis', s=1)
+        plt.colorbar(scatter)
+        plt.xlabel('Radius, mm')
+        plt.ylabel(f"{key}")
+        plt.title(f"Clustered Scatter Plot: {key}")
+        plt.savefig(f"{ftitle}_{key}_clustered.png")
+        plt.show()
 
 
     # for key in keys:
