@@ -72,7 +72,7 @@ if __name__ == '__main__':
     for key in keys:
         # サンプルデータの生成
         x = df['Radius'].to_numpy()
-        y = df['Aspect Ratio'].to_numpy()
+        y = df[key].to_numpy()
         #data = np.vstack((x, y)).T
         data = np.hstack((x, y))
         print(x.shape, y.shape, data.shape)
