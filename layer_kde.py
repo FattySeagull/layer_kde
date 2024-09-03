@@ -68,27 +68,17 @@ if __name__ == '__main__':
     # df['Radius'] = df[:, dt.math.sqrt((f.X - cx)**2 + (f.Y - cy)**2)]
     df['Aspect Ratio'] = df[:, f.Length / f.Width]
     # keys.append('Aspect Ratio')
+    x = df['Aspect Ratio'].to_numpy()
     
     for key in keys:
         # サンプルデータの生成
-        x = df['Aspect Ratio'].to_numpy()
         y = df[key].to_numpy()
-        #data = np.vstack((x, y)).T
-        data = np.hstack((x, y))
-        print(x.shape, y.shape, data.shape)
-
-        # k-meansクラスタリングの実行
-        kmeans = KMeans(n_clusters=2)
-        kmeans.fit(data)
-        labels = kmeans.labels_
-
-        # クラスタごとに色分けして散布図を作成
-        plt.figure(figsize=(10, 8))
-        scatter = plt.scatter(data[:, 0], data[:, 1], c=labels, cmap='viridis', s=1)
-        plt.colorbar(scatter)
-        plt.xlabel('Radius, mm')
-        plt.ylabel(f"{key}")
-        plt.title(f"Clustered Scatter Plot: {key}")
+        plt.figure(figsize=(8, 6))
+        scatter = plt.scatter(x, y, s=2, alpha=0.1)
+        plt.axis('equal')
+        plt.xlabel('Aspect ratio')
+        plt.ylabel(f"{key}, {nk.mnp[key]['unit']}")
+        plt.title(f"Aspect ratio vs {key}")
         plt.savefig(f"{ftitle}_{key}_clustered.png")
         plt.show()
 
