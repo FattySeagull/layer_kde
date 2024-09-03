@@ -1,0 +1,9 @@
+[submodule "nikon_utils"]
+	path = nikon_utils
+	url = https://github.com/FattySeagull/nikon_utils.git
+[submodule "myutils"]
+	path = myutils
+	url = https://github.com/FattySeagull/myutils.git
+[submodule "layer_stats"]
+	path = layer_stats
+	url = https://github.com/FattySeagull/layer_stats.git
