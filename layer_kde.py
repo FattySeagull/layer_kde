@@ -65,10 +65,11 @@ if __name__ == '__main__':
 
     
     cx, cy = df[:, dt.mean(f.X)][0, 0], df[:, dt.mean(f.Y)][0, 0]
-    # df['Radius'] = df[:, dt.math.sqrt((f.X - cx)**2 + (f.Y - cy)**2)]
+    df['Radius'] = df[:, dt.math.sqrt((f.X - cx)**2 + (f.Y - cy)**2)]
     df['Aspect Ratio'] = df[:, f.Length / f.Width]
-    # keys.append('Aspect Ratio')
-    x = df['Aspect Ratio'].to_numpy()
+    keys.append('Aspect Ratio')
+    #x = df['Aspect Ratio'].to_numpy()
+    x = df['Radius'].to_numpy()
     
     for key in keys:
         # サンプルデータの生成
@@ -76,10 +77,14 @@ if __name__ == '__main__':
         plt.figure(figsize=(8, 6))
         scatter = plt.scatter(x, y, s=2, alpha=0.1)
         plt.axis('equal')
-        plt.xlabel('Aspect ratio')
-        plt.ylabel(f"{key}, {nk.mnp[key]['unit']}")
-        plt.title(f"Aspect ratio vs {key}")
-        plt.savefig(f"{ftitle}_{key}_clustered.png")
+        plt.xlim(0, 7)
+        #plt.xlabel('Aspect ratio')
+        plt.xlabel('Radius, mm', fontsize=14)
+        plt.ylabel(key, fontsize=14)
+        plt.title(f"Radius vs {key}", fontsize=16)
+        plt.xticks(fontsize=12)
+        plt.yticks(fontsize=12)
+        plt.savefig(f"{ftitle}_R_vs_{key}_clustered.png")
         plt.show()
 
 
