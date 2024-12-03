@@ -61,37 +61,39 @@ if __name__ == '__main__':
     df = lys.rm_columns(df, mnpis)  # remove deactivated columns
     df = lys.rm_na_row(df, skip_cols = 4)  # remove rows with NA
     #df = df[dt.rowsum(dt.isna(f[4, :])) < len(mnpas) - 4, :]    # Noneを含む行を落とす
-    df = df[::100,:]    # 100分の1サンプリング
+    df = df[::10,:]    # 100分の1サンプリング
 
-    
     cx, cy = df[:, dt.mean(f.X)][0, 0], df[:, dt.mean(f.Y)][0, 0]
-    # df['Radius'] = df[:, dt.math.sqrt((f.X - cx)**2 + (f.Y - cy)**2)]
+    df['Radius'] = df[:, dt.math.sqrt((f.X - cx)**2 + (f.Y - cy)**2)]
     df['Aspect Ratio'] = df[:, f.Length / f.Width]
-    # keys.append('Aspect Ratio')
+    keys.append('Aspect Ratio')
+    #x = df['Aspect Ratio'].to_numpy()
+    x = df['Radius'].to_numpy()
     
     for key in keys:
         # サンプルデータの生成
-        x = df['Aspect Ratio'].to_numpy()
         y = df[key].to_numpy()
-        #data = np.vstack((x, y)).T
         data = np.hstack((x, y))
         print(x.shape, y.shape, data.shape)
-
         # k-meansクラスタリングの実行
-        kmeans = KMeans(n_clusters=2)
+        kmeans = KMeans(n_clusters=2, init='k-means++', max_iter=300, n_init=10, random_state=42)
         kmeans.fit(data)
         labels = kmeans.labels_
-
-        # クラスタごとに色分けして散布図を作成
-        plt.figure(figsize=(10, 8))
-        scatter = plt.scatter(data[:, 0], data[:, 1], c=labels, cmap='viridis', s=1)
-        plt.colorbar(scatter)
-        plt.xlabel('Radius, mm')
-        plt.ylabel(f"{key}")
-        plt.title(f"Clustered Scatter Plot: {key}")
-        plt.savefig(f"{ftitle}_{key}_clustered.png")
+        
+        plt.figure(figsize=(8, 6))
+        scatter = plt.scatter(x, y, c=labels, cmap='jet', s=1, alpha=0.1)
+        plt.axis('equal')
+        plt.xlim(0, 7)
+        plt.xlabel('Radius, mm', fontsize=16)
+        plt.ylabel(key, fontsize=16)
+        plt.title(f"Radius vs {key}", fontsize=16)
+        plt.xticks(fontsize=14)
+        plt.yticks(fontsize=14)
+        #cbar = plt.colorbar(scatter)
+        #cbar.set_label('Cluster', fontsize=14)
+        #plt.tight_layout(pad=0.1)
+        plt.savefig(f"{ftitle}_R_vs_{key}_clustered.png")
         plt.show()
-
 
     # for key in keys:
     #     dfstats = df[:, {
